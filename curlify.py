@@ -9,7 +9,7 @@ Usage:
 import os
 import sys
 import tempfile
-from _md5 import md5
+from hashlib import md5
 
 if sys.version_info.major >= 3:
     from shlex import quote
@@ -37,6 +37,7 @@ def to_curl(request, compressed=False, verify=True):
     if request.body:
         body = request.body
         data_arg = '-d'
+
         if isinstance(body, bytes):
             try:
                 body = body.decode('utf-8')
@@ -48,7 +49,7 @@ def to_curl(request, compressed=False, verify=True):
                 )
                 with open(data_file, 'wb') as file:
                     file.write(body)
-                body = f'@{data_file}'
+                body = '@{}'.format(data_file)
                 data_arg = '--data-binary'
         parts += [(data_arg, body)]
 
@@ -61,9 +62,11 @@ def to_curl(request, compressed=False, verify=True):
     parts += [(None, request.url)]
 
     flat_parts = []
+
     for k, value in parts:
         if k:
             flat_parts.append(quote(k))
+
         if value:
             flat_parts.append(quote(value))
 

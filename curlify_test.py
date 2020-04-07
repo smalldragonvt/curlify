@@ -1,11 +1,11 @@
 # coding: utf-8
+from __future__ import unicode_literals
 import re
 
 import requests
 import responses
 
 import curlify
-
 
 @responses.activate
 def test_empty_data():
@@ -28,7 +28,9 @@ def test_empty_data():
         " -H 'Connection: keep-alive'"
         " -H 'Content-Length: 0'"
         " -H 'User-agent: UA'"
-        f" {uri}"
+        " {uri}"
+    ).format(
+        uri=uri
     )
 
 
@@ -58,7 +60,9 @@ def test_ok():
         " -H 'Cookie: foo=bar'"
         " -H 'User-agent: UA'"
         " -d a=b"
-        f" {url}"
+        " {url}"
+    ).format(
+        url=url
     )
 
 
@@ -73,7 +77,9 @@ def test_prepare_request():
     assert curlify.to_curl(request.prepare()) == (
         "curl -X GET"
         " -H 'User-agent: UA'"
-        f" {url}"
+        " {url}"
+    ).format(
+        url=url
     )
 
 
@@ -89,7 +95,9 @@ def test_compressed():
         "curl -X GET"
         " -H 'User-agent: UA'"
         " --compressed"
-        f" {url}"
+        " {url}"
+    ).format(
+        url=url
     )
 
 
@@ -102,7 +110,9 @@ def test_verify():
     )
 
     assert curlify.to_curl(request.prepare(), verify=False) == (
-        f"curl -X GET -H 'user-agent: UA' --insecure {url}"
+        "curl -X GET -H 'user-agent: UA' --insecure {url}"
+    ).format(
+        url=url
     )
 
 
@@ -133,17 +143,19 @@ def test_post_csv_file():
 
     assert curl_cmd == (
         "curl -X POST -H 'Content-Length: 519'"
-        f" -H 'Content-Type: multipart/form-data; boundary={boundary}'"
+        " -H 'Content-Type: multipart/form-data; boundary={boundary}'"
         " -H 'User-agent: UA'"
-        f' -d \'--{boundary}\r\nContent-Disposition: form-data;'
+        ' -d \'--{boundary}\r\nContent-Disposition: form-data;'
         ' name="file"; filename="data.csv"\r\n\r\n'
         '"Id";"Title";"Content"\n'
         '1;"Simple Test";"Ici un test d\'"\'"\'échappement de simple quote"\n'
         '2;"UTF-8 Test";"ăѣ𝔠ծềſģȟᎥ𝒋ǩľḿꞑȯ𝘱𝑞𝗋𝘴ȶ𝞄𝜈ψ𝒙𝘆𝚣1234567890!@#$%^&*()'
-        '-_=+;:\'"\'"\'",[]{}<.>/?~𝘈Ḇ𝖢𝕯٤ḞԍНǏ𝙅ƘԸⲘ𝙉০Ρ𝗤Ɍ𝓢ȚЦ𝒱Ѡ𝓧ƳȤѧᖯć'
+        '-_=+;:\'"\'"\'",[]{{}}<.>/?~𝘈Ḇ𝖢𝕯٤ḞԍНǏ𝙅ƘԸⲘ𝙉০Ρ𝗤Ɍ𝓢ȚЦ𝒱Ѡ𝓧ƳȤѧᖯć'
         '𝗱ễ𝑓𝙜Ⴙ𝞲𝑗𝒌ļṃŉо𝞎𝒒ᵲꜱ𝙩ừ𝗏ŵ𝒙𝒚ź"'
-        f'\r\n--{boundary}--\r\n\''
+        '\r\n--{boundary}--\r\n\''
         ' https://httpbin.org/post'
+    ).format(
+        boundary=boundary
     )
 
 
@@ -165,10 +177,13 @@ def test_post_jpg_file():
     assert curl_cmd == (
         "curl -X POST"
         " -H 'Content-Length: 36782'"
-        f" -H 'Content-Type: multipart/form-data; boundary={boundary}'"
+        " -H 'Content-Type: multipart/form-data; boundary={boundary}'"
         " -H 'User-agent: UA'"
-        f" --data-binary @{filepath}"
+        " --data-binary @{filepath}"
         " https://httpbin.org/post"
+    ).format(
+        boundary=boundary,
+        filepath=filepath
     )
 
 
