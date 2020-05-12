@@ -43,7 +43,7 @@ def to_curl(request, compressed=False, verify=True):
             # handle binary files
             except UnicodeDecodeError:
                 data_file = os.path.join(
-                    tempfile.tempdir,
+                    tempfile.gettempdir(),
                     'curlify.{}.data'.format(md5(body).hexdigest())
                 )
                 with open(data_file, 'wb') as file:
