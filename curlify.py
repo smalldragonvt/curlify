@@ -32,7 +32,8 @@ def to_curl(request, compressed=False, verify=True):
     ]
 
     for k, value in sorted(request.headers.items()):
-        parts += [('-H', '{0}: {1}'.format(k, value))]
+        if k != "Content-Length":
+            parts += [('-H', '{0}: {1}'.format(k, value))]
 
     if request.body:
         body = request.body
